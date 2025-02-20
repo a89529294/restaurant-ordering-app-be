@@ -23,16 +23,14 @@ export const inviteCodes = pgTable(
 	"invite_codes",
 	{
 		// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-		id: bigint({ mode: "number" })
-			.primaryKey()
-			.generatedByDefaultAsIdentity({
-				name: "invite_codes_id_seq",
-				startWith: 1,
-				increment: 1,
-				minValue: 1,
-				maxValue: 9223372036854775807,
-				cache: 1,
-			}),
+		id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+			name: "invite_codes_id_seq",
+			startWith: 1,
+			increment: 1,
+			minValue: 1,
+			maxValue: 9223372036854775807,
+			cache: 1,
+		}),
 		createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
 			.defaultNow()
 			.notNull(),
@@ -43,7 +41,7 @@ export const inviteCodes = pgTable(
 	(table) => [
 		foreignKey({
 			columns: [table.usedBy],
-			foreignColumns: [restaurants.id],
+			foreignColumns: [restaurantsTable.id],
 			name: "invite_codes_used_by_fkey",
 		})
 			.onUpdate("cascade")
@@ -56,16 +54,14 @@ export const sessions = pgTable(
 	"sessions",
 	{
 		// You can use { mode: "bigint" } if numbers are exceeding js number limitations
-		id: bigint({ mode: "number" })
-			.primaryKey()
-			.generatedByDefaultAsIdentity({
-				name: "sessions_id_seq",
-				startWith: 1,
-				increment: 1,
-				minValue: 1,
-				maxValue: 9223372036854775807,
-				cache: 1,
-			}),
+		id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({
+			name: "sessions_id_seq",
+			startWith: 1,
+			increment: 1,
+			minValue: 1,
+			maxValue: 9223372036854775807,
+			cache: 1,
+		}),
 		createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
 			.defaultNow()
 			.notNull(),
@@ -78,7 +74,7 @@ export const sessions = pgTable(
 	(table) => [
 		foreignKey({
 			columns: [table.restaurantId],
-			foreignColumns: [restaurants.id],
+			foreignColumns: [restaurantsTable.id],
 			name: "sessions_restaurant_id_fkey",
 		})
 			.onUpdate("cascade")
