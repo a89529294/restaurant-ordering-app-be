@@ -11,6 +11,20 @@ export const restaurants = pgTable("restaurants", {
 	passwordHash: text("password_hash").notNull(),
 });
 
+export const tables = pgTable("tables", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	qrCodeUrl: text("qr_code_url").notNull(),
+	restaurantId: uuid("restaurant_id").defaultRandom().notNull(),
+	name: text().notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.restaurantId],
+			foreignColumns: [restaurants.id],
+			name: "tables_restaurant_id_fkey"
+		}).onUpdate("cascade").onDelete("cascade"),
+]);
+
 export const sessions = pgTable("sessions", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -31,7 +45,7 @@ export const inviteCodes = pgTable("invite_codes", {
 	code: text().notNull(),
 	usedBy: uuid("used_by"),
 	usedAt: timestamp("used_at", { withTimezone: true, mode: 'string' }),
-	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
+	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).default(sql`(now() + '3 days'::interval)`).notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.usedBy],

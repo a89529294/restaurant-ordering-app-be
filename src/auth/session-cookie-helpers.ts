@@ -1,5 +1,4 @@
 import type { Context } from "hono";
-import { env } from "hono/adapter";
 
 export function setSessionTokenCookie(
 	c: Context,

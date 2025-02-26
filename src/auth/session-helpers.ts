@@ -1,10 +1,10 @@
-import type { Restaurant, Session } from "./types.js";
+import type { Restaurant, Session } from "../db/types.js";
 import {
 	encodeBase32LowerCaseNoPadding,
 	encodeHexLowerCase,
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import db from "./index.js";
+import db from "../db/index.js";
 import { restaurants, sessions } from "../../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import { COOKIE_EXPIRATION_DURATION } from "../constants.js";
@@ -24,8 +24,6 @@ export async function createSession(
 		sha256(new TextEncoder().encode(token))
 	);
 
-	console.log(1, token);
-	console.log(1, hashedToken);
 	const returnedSession = await db
 		.insert(sessions)
 		.values({
@@ -47,8 +45,7 @@ export async function validateSessionToken(
 	const hashedToken = encodeHexLowerCase(
 		sha256(new TextEncoder().encode(token))
 	);
-	console.log(1, token);
-	console.log(2, hashedToken);
+
 	const result = await db
 		.select({ restaurant: restaurants, session: sessions })
 		.from(sessions)
@@ -56,8 +53,6 @@ export async function validateSessionToken(
 		.where(eq(sessions.hashedToken, hashedToken));
 
 	const allSessions = await db.select().from(sessions);
-
-	console.log(allSessions);
 
 	if (result.length < 1) {
 		return { session: null, restaurant: null };
